@@ -1,0 +1,59 @@
+---
+title: "sparklyudf: Scala UDF from R - Example"
+output:
+  github_document:
+    fig_width: 9
+    fig_height: 5
+---
+
+sparklyudf demonstrates how to build a [sparklyr](http://github.com/rstudio/sparklyr) extension package that uses custom Scala code which is compiled, deployed to Apache Spark and registered as an UDF that can be used in SQL and [dplyr](https://github.com/tidyverse/dplyr).
+
+## Building
+
+First build this package, then build its Spark 2.0 jars by running:
+
+```{r eval=FALSE}
+spec <- sparklyr::spark_default_compilation_spec()
+spec <- Filter(function(e) e$spark_version >= "2.0.0", spec)
+sparklyr::compile_package_jars()
+```
+
+then build the R package as usual.
+
+This package contains an Scala-based UDF defined as:
+
+```{scala eval=FALSE}
+object Main {
+  def register_hello(spark: SparkSession) = {
+    spark.udf.register("hello", (name: String) => {
+      "Hello, " + name + "! - From Scala"
+    })
+  }
+}
+```
+
+## Getting Started
+
+Connect and test this package as follows:
+
+```{r}
+library(sparklyudf)
+library(sparklyr)
+library(dplyr)
+
+sc <- spark_connect(master = "local")
+
+sparklyudf_register(sc)
+```
+
+Now the Scala UDF `hello()` is registered and can be used as follows:
+
+```{r}
+data.frame(name = "Javier") %>%
+  copy_to(sc, .) %>%
+  mutate(hello = hello(name))
+```
+
+```{r}
+spark_disconnect_all()
+```

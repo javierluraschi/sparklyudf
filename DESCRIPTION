@@ -1,0 +1,17 @@
+Package: sparklyudf
+Type: Package
+Title: sparklyudf: Scala UDF from R - Example
+Version: 0.1.0
+Authors@R: c(
+    person("Javier", "Luraschi", email = "javier@rstudio.com", role = c("aut", "cre"))
+    )
+Maintainer: Javier Luraschi <javier@rstudio.com>
+Description: Demonstrates how to build a [sparklyr](http://github.com/rstudio/sparklyr) extension package 
+    that uses custom Scala code which is compiled, deployed to Apache Spark and registered as an UDF that
+    can be used in SQL and [dplyr](https://github.com/tidyverse/dplyr).
+License: MIT LICENSE
+Depends:
+    R (>= 3.1.2)
+Imports:
+    sparklyr,
+RoxygenNote: 6.0.0
